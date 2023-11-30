@@ -1,10 +1,12 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client')
+const cors = require('cors');
 const app = express();
 const port = 3001;
 
 const prisma = new PrismaClient()
 app.use(express.json())
+app.use(cors({ origin: 'http://127.0.0.1:5173' }));
 
 
 // async function main() {
@@ -81,6 +83,50 @@ app.get('/makes', async (req, res) => {
   }
   
 });
+
+// app.get('/years', async (req, res) => {
+//   try {
+//     const availableYears = await prisma.vehiclemodelyear.findMany({
+
+//     })
+    
+//   } catch(error) {
+//     console.error('Error:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+
+// })
+
+app.get('/years', async (req, res) => {
+  try {
+    const { make } = req.query;
+
+    // Find distinct years for a given make (case-insensitive)
+    const distinctYears = await prisma.vehiclemodelyear.groupBy({
+      by: ['year'],
+      where: {
+        make: {
+          equals: make,
+          mode: 'insensitive',
+        },
+      },
+      orderBy: {
+        year: 'desc',
+      },
+      select: {
+        year: true,
+      },
+    });
+
+    const years = distinctYears.map((entry) => entry.year);
+
+    res.json({ years });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 const server = app.listen(port, () =>
   console.log(`

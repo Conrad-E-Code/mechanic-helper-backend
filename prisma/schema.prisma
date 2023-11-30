@@ -35,6 +35,7 @@ model vehiclemodelyear {
   year   Int      
   make   String?
   model  String   @db.VarChar(50)
+  bodyStyles  String[] @db.VarChar(255)
   
   @@unique([year, make, model], name: "U_vehiclemodelyear_year_make_model")
   @@index([year], name: "I_vehiclemodelyear_year")
