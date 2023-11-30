@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// model Post {
+
+//   id        Int      @id @default(autoincrement())
+
+//   createdAt DateTime @default(now())
+
+//   updatedAt DateTime @updatedAt
+
+//   title     String   @db.VarChar(255)
+
+//   content   String?
+
+//   published Boolean  @default(false)
+
+//   author    User     @relation(fields: [authorId], references: [id])
+
+//   authorId  Int
+
+// }
+
+model vehiclemodelyear {
+  id     Int      @id @default(autoincrement())
+  year   Int      
+  make   String?
+  model  String   @db.VarChar(50)
+  
+  @@unique([year, make, model], name: "U_vehiclemodelyear_year_make_model")
+  @@index([year], name: "I_vehiclemodelyear_year")
+  @@index([make], name: "I_vehiclemodelyear_make")
+  @@index([model], name: "I_vehiclemodelyear_model")
+}
+
